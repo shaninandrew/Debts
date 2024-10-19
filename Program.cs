@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -9,6 +8,7 @@ namespace Debts
     {
         static void Main(string[] args)
         {
+
             List<XAccrualItem> accrualItems = new List<XAccrualItem> ();
             accrualItems.Add (new XAccrualItem (100, DateTime.Now.AddMonths (-10)));
             accrualItems.Add (new XAccrualItem (100, DateTime.Now.AddMonths (-9)));
