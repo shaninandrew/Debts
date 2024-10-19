@@ -30,7 +30,7 @@ namespace Debts
         }
 
         /// <summary>
-        /// Начисление в форме строки
+        /// Представление начисления в форме строки
         /// </summary>
         /// <returns></returns>
         public string ToString()
