@@ -131,10 +131,32 @@ namespace Debts
             accruals.Sort();
             payments.Sort();
 
+            DateTime FirstDate = TargetDate;
+
             //Загоняем в задолженности все начисления, до даты расчета
-            foreach (XAccrualItem acc in accruals )
+            foreach (XAccrualItem acc in accruals)
                 if (acc.MoratoriumDate<TargetDate)
+                {
                     Debts.Add (new XDebtItem (acc.Summa, acc.MoratoriumDate, TargetDate));
+                    //Проставляем самую раннюю дату начислений
+                    if (FirstDate>acc.MoratoriumDate) FirstDate = acc.MoratoriumDate;
+                }
+
+            //Если есть аванс (переплата) от клиента, то она пойдет как 1 платеж
+            //платежи у нас грантировано есть в системе
+            if (StartSaldo<=0.0)
+            {
+                payments.Add (new XPaymentItem (-StartSaldo, FirstDate));
+                payments.Sort ();
+            }
+            else //то пойдет как начисление
+            {
+                accruals.Add(new XAccrualItem(StartSaldo, FirstDate));
+                accruals.Sort ();
+            }
+
+            
+            
 
             //Теперь всеми платежами по очереди считаем CurrentSaldo, если задолженность менее 0, то
             //можно выключать задолженность
