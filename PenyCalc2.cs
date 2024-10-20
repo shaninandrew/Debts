@@ -128,8 +128,8 @@ namespace Debts
         public XDebtProcessor(List<XAccrualItem> accruals, List<XPaymentItem> payments, DateTime TargetDate, double StartSaldo = 0.0)
         {
             CurrentSaldo=StartSaldo;
-            accruals.Sort();
-            payments.Sort();
+            accruals.Sort ();
+            payments.Sort ();
 
             DateTime FirstDate = TargetDate;
 
@@ -139,7 +139,8 @@ namespace Debts
                 {
                     Debts.Add (new XDebtItem (acc.Summa, acc.MoratoriumDate, TargetDate));
                     //Проставляем самую раннюю дату начислений
-                    if (FirstDate>acc.MoratoriumDate) FirstDate = acc.MoratoriumDate;
+                    if (FirstDate>acc.MoratoriumDate)
+                        FirstDate=acc.MoratoriumDate;
                 }
 
             //Если есть аванс (переплата) от клиента, то она пойдет как 1 платеж
@@ -151,12 +152,9 @@ namespace Debts
             }
             else //то пойдет как начисление
             {
-                accruals.Add(new XAccrualItem(StartSaldo, FirstDate));
+                accruals.Add (new XAccrualItem (StartSaldo, FirstDate));
                 accruals.Sort ();
             }
-
-            
-            
 
             //Теперь всеми платежами по очереди считаем CurrentSaldo, если задолженность менее 0, то
             //можно выключать задолженность
@@ -168,10 +166,10 @@ namespace Debts
                 //Формируем начальный остаток - вычитаем платеж.
                 CurrentSaldo=-payments[i].Summa;
 
-                #if DEBUG
+#if DEBUG
                 Console.WriteLine ($"Платеж #{i} от {payments[i].PaymentDate.ToShortDateString ()}  -{payments[i].Summa}  -- остаток {CurrentSaldo.ToString ("0.##")}");
                 Console.WriteLine ($"--- Расчет ----");
-                #endif
+#endif
 
                 //Проходим по начислениям и 
                 foreach (XDebtItem debtItem in Debts)
@@ -185,15 +183,15 @@ namespace Debts
                     double tmp_debt = debtItem.Debt;
 
                     //Корректируем плавающий долг - выедаем платеж начислениями
-                    #if DEBUG
-                        Console.Write ($"  Начисление +{tmp_debt}р.  #{j} от {debtItem.StartDate.ToShortDateString ()} -- остаток {CurrentSaldo.ToString ("0.##")}");
-                    #endif
+#if DEBUG
+                    Console.Write ($"  Начисление +{tmp_debt}р.  #{j} от {debtItem.StartDate.ToShortDateString ()} -- остаток {CurrentSaldo.ToString ("0.##")}");
+#endif
                     //Корректируем общей сумму задоженности на сумму начисления
                     CurrentSaldo=CurrentSaldo+tmp_debt;
 
-                    #if DEBUG
-                        Console.WriteLine ($" -> {CurrentSaldo.ToString ("0")}");
-                    #endif
+#if DEBUG
+                    Console.WriteLine ($" -> {CurrentSaldo.ToString ("0")}");
+#endif
 
                     //Платеж перекрыл начисление   - Долг закрыт?
                     if (CurrentSaldo<=0.0)  //Да, идем к следующей задолженности после
@@ -212,12 +210,12 @@ namespace Debts
                     }
                 }  //Итак ходим и корректируем все начисления через платеж, откусывая задолженности платежами
 
-                #if DEBUG
-                    Console.WriteLine ($"--- Расчет закончен. ----");
-                    foreach (XDebtItem di in Debts)
-                        Console.WriteLine (di.ToString ());
-                    Console.WriteLine ($"");
-                #endif                
+#if DEBUG
+                Console.WriteLine ($"--- Расчет закончен. ----");
+                foreach (XDebtItem di in Debts)
+                    Console.WriteLine (di.ToString ());
+                Console.WriteLine ($"");
+#endif
             } //i-следующий платеж
 
             //-- Обходим все задолженности ---
@@ -241,7 +239,7 @@ namespace Debts
         /// <returns>Список задолженностей со сроками, датами начала и окончания существования задолженности.</returns>
         public List<XDebtItem> PostProcess(bool OnlyOpened)
         {
-            return Debts.Where (x => x.Duration>30 && ((OnlyOpened && !x.IsCompleted) || !OnlyOpened) ).ToList ();
+            return Debts.Where (x => x.Duration>30&&((OnlyOpened&&!x.IsCompleted)||!OnlyOpened)).ToList ();
         }
     }
 }
